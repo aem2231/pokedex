@@ -1,2 +1,4 @@
 .direnv
+data
+session.json
 **/__pycache__/
