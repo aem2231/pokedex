@@ -10,32 +10,32 @@ class LoginView(ctk.CTkFrame):
         self.create_ui()
         self.pack(expand=True, fill="both")
 
-
     def create_ui(self) -> None:
-        self.username_label = ctk.CTkLabel(self, text="Username:")
-        self.username_label.pack(pady=10)
-        self.entry_username = ctk.CTkEntry(self, width=200)
-        self.entry_username.pack(pady=5)
+        username_label = ctk.CTkLabel(self, text="Username:")
+        username_label.pack(pady=10)
+        entry_username = ctk.CTkEntry(self, width=200)
+        entry_username.pack(pady=5)
 
-        self.password_label = ctk.CTkLabel(self, text="Password:")
-        self.password_label.pack(pady=10)
-        self.entry_password = ctk.CTkEntry(self, width=200, show="*")
-        self.entry_password.pack(pady=5)
+        password_label = ctk.CTkLabel(self, text="Password:")
+        password_label.pack(pady=10)
+        entry_password = ctk.CTkEntry(self, width=200, show="*")
+        entry_password.pack(pady=5)
 
-        self.login_button = ctk.CTkButton(self, text="Login", command=self.on_login_button_click)
-        self.login_button.pack(pady=10)
+        login_button = ctk.CTkButton(self, text="Login", command=lambda: self.on_login_button_click(entry_username, entry_password))
+        login_button.pack(pady=10)
 
-        self.switch_to_signup_button = ctk.CTkButton(self, text="Don't have an account? Click here to signup.", command=self.switch_to_signup)
-        self.switch_to_signup_button.pack(pady=10)
+        switch_to_signup_button = ctk.CTkButton(self, text="Don't have an account? Click here to signup.", command=self.switch_to_signup)
+        switch_to_signup_button.pack(pady=10)
 
-    def on_login_button_click(self) -> None:
-        username: str = self.entry_username.get()
-        password: str  = self.entry_password.get()
+    def on_login_button_click(self, entry_username, entry_password) -> None:
+        username: str = entry_username.get()
+        password: str  = entry_password.get()
 
         r: int = self.AccountManager.validate_user(username, password)
         if r == 0:
             Helper.show_popup("Error", "Username or password is incorrect")
         if r == 1:
+            Helper.start_session(username)
             from views.home_view import HomeView
             self.master.show_view(HomeView)
         if r == 2:

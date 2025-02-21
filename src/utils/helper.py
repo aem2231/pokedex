@@ -1,6 +1,10 @@
+from email.policy import default
 from pathlib import Path
+import pandas as pd
+from typing_extensions import Union
 import customtkinter as ctk
 import bcrypt
+import json
 
 class Helper:
     @classmethod
@@ -9,8 +13,10 @@ class Helper:
 
     @classmethod
     def start(cls):
+
+        # Create the data file if it doesn't exist
         try:
-            user_data_file = Path.cwd() / "data" / "user_data.csv"
+            user_data_file: Path = Path.cwd() / "data" / "user_data.csv"
             user_data_file.parent.mkdir(parents=True, exist_ok=True)
 
             if not user_data_file.exists():
@@ -18,6 +24,34 @@ class Helper:
                 print(f"Created new data file at {user_data_file}")
         except Exception as e:
             print(f"An error occured while trying to create the data file: {e}")
+
+    @classmethod
+    def load_config(cls):
+        # Why did I add a config folder? Well as a linux user, 'ricing' is in my blood. See: https://www.youtube.com/watch?v=RuofJYG2yak
+        config: dict[str, Union[str, Path]] = {}
+        try:
+            config_file: Path = Path.cwd() / "config" / "config.jsonc"
+            config_file.parent.mkdir(parents=True, exist_ok=True)
+            theme_path: Path = Path.cwd() / "themes" / "catppuccin-mocha.json"
+            default_config: dict[str, str] = {
+                "appearance_mode": str(theme_path),
+                "color_theme": str(theme_path)
+            }
+
+            if not config_file.exists():
+
+                with open(config_file, "w") as file:
+                    json.dump(default_config, file, indent=4)
+                print(f"Created new config file at {config_file}")
+                return default_config
+            else:
+                with open(config_file, "r") as file:
+                    config = json.load(file)
+                return config
+        except Exception as e:
+            print(f"An error occured while trying to create the data file: {e}")
+            return default_config
+
 
     @classmethod
     def show_popup(cls, title: str, message: str):
@@ -34,3 +68,14 @@ class Helper:
     @classmethod
     def hash_password(cls, password: str) -> str:
         return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+
+    @classmethod
+    def get_username(cls) -> str:
+        with open("session.json", "r") as session_file:
+            data = json.load(session_file)
+            return data["username"]
+
+    @classmethod
+    def start_session(cls, username) -> None:
+        with open("session.json", "w") as session_file:
+            json.dump({"username": username}, session_file, indent=4)
