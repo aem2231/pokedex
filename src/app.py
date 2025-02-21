@@ -5,15 +5,16 @@ from views.signup_view import SignupView
 
 class MainApp(ctk.CTk):
     def __init__(self):
+        self.config = Helper.load_config()
+        ctk.set_appearance_mode(self.config["appearance_mode"])
+        ctk.set_default_color_theme(self.config["color_theme"])
         super().__init__()
-
         self.title("Pokédex App")
-        self.geometry("400x300")
+        self.geometry("600x400")
 
         self.current_view = LoginView(self)
 
     def show_view(self, view_class):
-        """Switch to a different view by destroying the current view."""
         if self.current_view is not None:
             self.current_view.destroy()  # Destroy the current view if it exists
 
