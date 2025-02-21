@@ -3,3 +3,4 @@ requests
 customtkinter
 pillow
 python-dotenv
+bcrypt
