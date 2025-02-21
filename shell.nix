@@ -9,6 +9,7 @@ pkgs.mkShell {
       pypkgs.tkinter
       pypkgs.customtkinter
       pypkgs.python-dotenv
+      pypkgs.bcrypt
     ]))
   ];
 }
