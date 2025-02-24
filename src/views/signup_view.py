@@ -7,6 +7,7 @@ class SignupView(ctk.CTkFrame):
         super().__init__(master)
         self.master = master
         self.AccountManager = AccountManager()
+        self.Helper = Helper()
         self.create_ui()
         self.pack(expand=True, fill="both")
 
@@ -37,21 +38,14 @@ class SignupView(ctk.CTkFrame):
         username = entry_username.get()
         password = entry_password.get()
 
-        r = self.AccountManager.validate_signup(email, username, password) # Here, r is just the return value
-        if r == 3:
-            Helper.show_popup("Error", "Email already exists")
-        elif r == 4:
-            Helper.show_popup("Error", "Username already exists")
-        elif r == 5:
-            Helper.show_popup("Error", "Invalid email")
-        elif r in (6, 7, 8):
-            Helper.show_popup("Error", f"{'email' if r == 6 else 'username' if r == 7 else 'password'} must not be empty.")
-        elif r == 9:
-            Helper.show_popup("Error", "Password must be at least 8 characters long.")
-        else:
+        error = self.AccountManager.validate_signup(email, username, password)
+        message = self.Helper.error_handler(error)
+        if message == None:
             Helper.start_session(username)
             from views.home_view import HomeView
             self.master.show_view(HomeView)
+        else:
+            Helper.show_popup(message)
 
     def switch_to_login(self) -> None:
         from views.login_view import LoginView

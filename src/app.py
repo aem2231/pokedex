@@ -10,7 +10,7 @@ class MainApp(ctk.CTk):
         ctk.set_default_color_theme(self.config["color_theme"])
         super().__init__()
         self.title("Pokédex App")
-        self.geometry("600x400")
+        self.geometry("700x900")
 
         self.current_view = LoginView(self)
 

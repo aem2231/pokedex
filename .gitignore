@@ -1,4 +1,5 @@
 .direnv
 data
 session.json
+config
 **/__pycache__/

@@ -7,6 +7,7 @@ class LoginView(ctk.CTkFrame):
         super().__init__(master)
         self.master = master
         self.AccountManager = AccountManager()
+        self.Helper = Helper()
         self.create_ui()
         self.pack(expand=True, fill="both")
 
@@ -31,15 +32,14 @@ class LoginView(ctk.CTkFrame):
         username: str = entry_username.get()
         password: str  = entry_password.get()
 
-        r: int = self.AccountManager.validate_user(username, password)
-        if r == 0:
-            Helper.show_popup("Error", "Username or password is incorrect")
-        if r == 1:
+        error = self.AccountManager.validate_user(username, password)
+        message = self.Helper.error_handler(error)
+        if message == None:
             Helper.start_session(username)
             from views.home_view import HomeView
             self.master.show_view(HomeView)
-        if r == 2:
-            Helper.show_popup("Error", "User does not exist")
+        else:
+            Helper.show_popup(message)
 
     def switch_to_signup(self) -> None:
         from views.signup_view import SignupView
