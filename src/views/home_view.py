@@ -54,8 +54,16 @@ class HomeView(ctk.CTkFrame):
             4: "Hey",
             5: "What's up ",
             6: "Howdy",
-            7: "Greetings"
-        }
+            7: "Greetings",
+            8: "Bonjour",
+            9: "Ciao",
+            10: "Salut",
+            11: "Guten Tag",
+            12: "Dobrodošli",
+            13: "Merhaba",
+            14: "Salve",
+            15: "Hola"        
+            }
 
-        greeting: str = greetings[random.randint(1, 7)]
+        greeting: str = greetings[random.randint(1, 15)]
         return greeting
