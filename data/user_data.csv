@@ -1,4 +1,2 @@
-Username,Password,Poké1,Poké2,Poké3,Poké4,Poké5,Poké6,Custom Name
-test,12345,Pikachu,Squirtle,Rattata,,,,Test User
-ash,secretpass,Bulbasaur,Charmander,Jigglypuff,,,,Ash
-misty,anotherpass,Starmie,Poliwhirl,Gyarados,,,,Misty
+Email,Username,Password,Poké1,Poké2,Poké3,Poké4,Poké5,Poké6
+test@gmail.com,test,$2b$12$A5.c7vs7fTY2jo0DKCUjyOpuGHSnGM1FmFisU2gRt.1Cmkbzvlcji,,,,,,
