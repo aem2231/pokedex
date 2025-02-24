@@ -1,6 +1,6 @@
 from email.message import Message
 from pathlib import Path
-from typing import Union
+from typing import Union, Optional
 import pandas as pd
 import smtplib
 from dotenv import load_dotenv
@@ -10,18 +10,16 @@ import re
 from enum import Enum
 from utils.helper import Helper
 from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart 
+from email.mime.multipart import MIMEMultipart
 from utils.error_codes import ErrorCodes
-from utils.helper import Helper
-
 
 class AccountManager:
     def __init__(self) -> None:
         self.helper = Helper()
         # Load all environment variables
         load_dotenv()
-        self.EMAIL_USERNAME = os.getenv("EMAIL_USERNAME")
-        self.EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
+        self.EMAIL_USERNAME: Optional[str] = os.getenv("EMAIL_USERNAME")
+        self.EMAIL_PASSWORD: Optional[str] = os.getenv("EMAIL_PASSWORD")
 
         self.data_file: Path = Helper.get_user_data_path()
         try:
@@ -31,7 +29,7 @@ class AccountManager:
             self.users_df = pd.DataFrame(columns=['Email', 'Username', 'Password',
                                                 'Poké1', 'Poké2', 'Poké3', 'Poké4', 'Poké5', 'Poké6'])
 
-    def validate_user(self, username, password) -> int:
+    def validate_user(self, username: str, password: str) -> int:
         # Find the matching user
         valid_user = self.users_df[(self.users_df["Username"] == username)]
 
@@ -45,7 +43,7 @@ class AccountManager:
         else:
             return ErrorCodes.INCORRECT_USERNAME_OR_PASSWORD.value
 
-    def validate_signup(self, email, username, password) -> Union[int, None]:
+    def validate_signup(self, email: str, username: str, password: str) -> int:
         if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email):
             return ErrorCodes.INVALID_EMAIL.value
 
@@ -68,8 +66,7 @@ class AccountManager:
             self.send_email(email, username)
             return ErrorCodes.SUCCESS.value
 
-
-    def create_account(self, email, username, password) -> None:
+    def create_account(self, email: str, username: str, password: str) -> None:
         new_row = {
            'Email': email,
            'Username': username,
@@ -86,11 +83,10 @@ class AccountManager:
         self.users_df = pd.concat([self.users_df, pd.DataFrame([new_row])], ignore_index=True)
         self.users_df.to_csv(self.data_file, index=False)
 
-
-    def send_email(self, email, username) -> None:
+    def send_email(self, email: str, username: str) -> None:
         sender_email = self.EMAIL_USERNAME
         sender_password = self.EMAIL_PASSWORD
-        recipient_email = email
+        recipient_email: str = email
 
         message = MIMEMultipart()
         message["From"] = str(sender_email)
@@ -106,6 +102,6 @@ class AccountManager:
             server.login(str(sender_email), str(sender_password))
             server.sendmail(str(sender_email), recipient_email, message.as_string())
         except Exception as e:
-            print(f"An error occured :(\n{e}")
+            print(f"An error occurred :(\n{e}")
         finally:
             server.quit()
