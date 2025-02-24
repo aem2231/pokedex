@@ -5,6 +5,7 @@ from typing_extensions import Union
 import customtkinter as ctk
 import bcrypt
 import json
+from typing import Union
 
 class Helper:
     @classmethod
@@ -54,10 +55,13 @@ class Helper:
 
 
     @classmethod
-    def show_popup(cls, title: str, message: str):
+    def show_popup(cls, message: dict[str, str]) -> None:
+        title: str = message["Title"]
+        message: str = message["Message"]
+
         popup = ctk.CTkToplevel()
         popup.title(title)
-        popup.geometry("200x100")
+        popup.geometry("300x100")
 
         label = ctk.CTkLabel(popup, text=message)
         label.pack(pady=10)
@@ -79,3 +83,24 @@ class Helper:
     def start_session(cls, username) -> None:
         with open("session.json", "w") as session_file:
             json.dump({"username": username}, session_file, indent=4)
+
+    @classmethod
+    def error_handler(cls, error_code) -> Union[dict[str, str], None]:
+        message: dict[str, str] = {"Title": "Error", "Message": ""}
+        if error_code == 0:
+            message["Message"] = "Username or password is incorrect"
+        elif error_code == 1:
+            message["Message"] = "User not found"
+        elif error_code == 2:
+            message["Message"] = "User already exists"
+        elif error_code == 3:
+            message["Message"] = "Invalid email"
+        elif error_code == 4:
+            message["Message"] = "Inavalid username"
+        elif error_code == 5:
+            message["Message"] = "Password must be atleast 8 digits"
+        elif error_code == 6:
+            message["Message"] = "Email already exists"
+        elif error_code == 7:
+            return None
+        return message

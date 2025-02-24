@@ -1,0 +1,11 @@
+from enum import Enum
+
+class ErrorCodes(Enum):
+    INCORRECT_USERNAME_OR_PASSWORD = 0
+    USER_NOT_FOUND = 1
+    USER_ALREADY_EXISTS = 2
+    INVALID_EMAIL = 3
+    INVALID_USERNAME = 4
+    PASSWORD_TOO_SHORT = 5
+    EMAIL_ALREADY_EXISTS = 6
+    SUCCESS = 7

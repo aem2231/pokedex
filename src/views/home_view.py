@@ -1,5 +1,4 @@
 import customtkinter as ctk
-import keyboard
 from utils.helper import Helper
 import random
 

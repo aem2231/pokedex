@@ -7,14 +7,17 @@ from dotenv import load_dotenv
 import bcrypt
 import os
 import re
+from enum import Enum
 from utils.helper import Helper
 from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+from email.mime.multipart import MIMEMultipart 
+from utils.error_codes import ErrorCodes
+from utils.helper import Helper
 
 
 class AccountManager:
     def __init__(self) -> None:
-
+        self.helper = Helper()
         # Load all environment variables
         load_dotenv()
         self.EMAIL_USERNAME = os.getenv("EMAIL_USERNAME")
@@ -33,36 +36,37 @@ class AccountManager:
         valid_user = self.users_df[(self.users_df["Username"] == username)]
 
         if valid_user.empty:
-            return 2  # No such user
+            return ErrorCodes.USER_NOT_FOUND.value
 
         stored_hash: str = valid_user["Password"].values[0]
 
         if bcrypt.checkpw(password.encode(), stored_hash.encode()):
-            return 1
+            return ErrorCodes.SUCCESS.value
         else:
-            return 0
+            return ErrorCodes.INCORRECT_USERNAME_OR_PASSWORD.value
 
     def validate_signup(self, email, username, password) -> Union[int, None]:
         if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email):
-            return 5 # Invalid email
+            return ErrorCodes.INVALID_EMAIL.value
 
         if email == "":
-            return 6
+            return ErrorCodes.INVALID_EMAIL.value
         if username == "":
-            return 7
+            return ErrorCodes.INVALID_USERNAME.value
         if password == "":
-            return 8
+            return ErrorCodes.PASSWORD_TOO_SHORT.value
 
         if self.users_df["Email"].str.contains(email).any():
-            return 3 # Email already exists
+            return ErrorCodes.EMAIL_ALREADY_EXISTS.value
         elif self.users_df["Username"].str.contains(username).any():
-            return 4 # Username already exists
+            return ErrorCodes.USER_ALREADY_EXISTS.value
         elif len(password) < 8:
-            return 9 # Password too short
+            return ErrorCodes.PASSWORD_TOO_SHORT.value
         else:
             # Since the email and username are unique, we can create the account and send a confirmation email.
             self.create_account(email, username, password)
             self.send_email(email, username)
+            return ErrorCodes.SUCCESS.value
 
 
     def create_account(self, email, username, password) -> None:
