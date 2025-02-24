@@ -28,13 +28,13 @@ class LoginView(ctk.CTkFrame):
         switch_to_signup_button = ctk.CTkButton(self, text="Don't have an account? Click here to signup.", command=self.switch_to_signup)
         switch_to_signup_button.pack(pady=10)
 
-    def on_login_button_click(self, entry_username, entry_password) -> None:
+    def on_login_button_click(self, entry_username: ctk.CTkEntry, entry_password: ctk.CTkEntry) -> None:
         username: str = entry_username.get()
         password: str  = entry_password.get()
 
         error = self.AccountManager.validate_user(username, password)
         message = self.Helper.error_handler(error)
-        if message == None:
+        if message is None:
             Helper.start_session(username)
             from views.home_view import HomeView
             self.master.show_view(HomeView)

@@ -1,20 +1,18 @@
 from email.policy import default
 from pathlib import Path
 import pandas as pd
-from typing_extensions import Union
+from typing import Union, Optional, Dict, Mapping
 import customtkinter as ctk
 import bcrypt
 import json
-from typing import Union
 
 class Helper:
     @classmethod
-    def get_user_data_path(cls):
+    def get_user_data_path(cls) -> Path:
         return Path.cwd() / "data" / "user_data.csv"
 
     @classmethod
-    def start(cls):
-
+    def start(cls) -> None:
         # Create the data file if it doesn't exist
         try:
             user_data_file: Path = Path.cwd() / "data" / "user_data.csv"
@@ -24,23 +22,21 @@ class Helper:
                 user_data_file.write_text("Email,Username,Password,Poké1,Poké2,Poké3,Poké4,Poké5,Poké6\n")
                 print(f"Created new data file at {user_data_file}")
         except Exception as e:
-            print(f"An error occured while trying to create the data file: {e}")
+            print(f"An error occurred while trying to create the data file: {e}")
 
     @classmethod
-    def load_config(cls):
-        # Why did I add a config folder? Well as a linux user, 'ricing' is in my blood. See: https://www.youtube.com/watch?v=RuofJYG2yak
-        config: dict[str, Union[str, Path]] = {}
+    def load_config(cls) -> Mapping[str, Union[str, Path]]:
+        config: Mapping[str, Union[str, Path]] = {}
         try:
             config_file: Path = Path.cwd() / "config" / "config.jsonc"
             config_file.parent.mkdir(parents=True, exist_ok=True)
             theme_path: Path = Path.cwd() / "themes" / "catppuccin-mocha.json"
-            default_config: dict[str, str] = {
+            default_config: Dict[str, str] = {
                 "appearance_mode": str(theme_path),
                 "color_theme": str(theme_path)
             }
 
             if not config_file.exists():
-
                 with open(config_file, "w") as file:
                     json.dump(default_config, file, indent=4)
                 print(f"Created new config file at {config_file}")
@@ -50,20 +46,19 @@ class Helper:
                     config = json.load(file)
                 return config
         except Exception as e:
-            print(f"An error occured while trying to create the data file: {e}")
+            print(f"An error occurred while trying to create the data file: {e}")
             return default_config
 
-
     @classmethod
-    def show_popup(cls, message: dict[str, str]) -> None:
+    def show_popup(cls, message: Dict[str, str]) -> None:
         title: str = message["Title"]
-        message: str = message["Message"]
+        content: str = message["Message"]
 
         popup = ctk.CTkToplevel()
         popup.title(title)
         popup.geometry("300x100")
 
-        label = ctk.CTkLabel(popup, text=message)
+        label = ctk.CTkLabel(popup, text=content)
         label.pack(pady=10)
 
         button = ctk.CTkButton(popup, text="OK", command=popup.destroy)
@@ -80,13 +75,13 @@ class Helper:
             return data["username"]
 
     @classmethod
-    def start_session(cls, username) -> None:
+    def start_session(cls, username: str) -> None:
         with open("session.json", "w") as session_file:
             json.dump({"username": username}, session_file, indent=4)
 
     @classmethod
-    def error_handler(cls, error_code) -> Union[dict[str, str], None]:
-        message: dict[str, str] = {"Title": "Error", "Message": ""}
+    def error_handler(cls, error_code: int) -> Optional[Dict[str, str]]:
+        message: Dict[str, str] = {"Title": "Message", "Message": ""}
         if error_code == 0:
             message["Message"] = "Username or password is incorrect"
         elif error_code == 1:
@@ -96,9 +91,9 @@ class Helper:
         elif error_code == 3:
             message["Message"] = "Invalid email"
         elif error_code == 4:
-            message["Message"] = "Inavalid username"
+            message["Message"] = "Invalid username"
         elif error_code == 5:
-            message["Message"] = "Password must be atleast 8 digits"
+            message["Message"] = "Password must be at least 8 digits"
         elif error_code == 6:
             message["Message"] = "Email already exists"
         elif error_code == 7:

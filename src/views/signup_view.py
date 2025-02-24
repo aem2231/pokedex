@@ -1,9 +1,11 @@
+from typing import Union
 import customtkinter as ctk
+from pandas.io.parsers.base_parser import Enum
 from models.account_manager import AccountManager
 from utils.helper import Helper
 
 class SignupView(ctk.CTkFrame):
-    def __init__(self, master):
+    def __init__(self, master) -> None:
         super().__init__(master)
         self.master = master
         self.AccountManager = AccountManager()
@@ -33,14 +35,19 @@ class SignupView(ctk.CTkFrame):
         switch_to_login_button = ctk.CTkButton(self, text="Already have an account? Click here to login.", command=self.switch_to_login)
         switch_to_login_button.pack(pady=10)
 
-    def on_signup_button_click(self, entry_email, entry_username, entry_password) -> None:
-        email = entry_email.get()
-        username = entry_username.get()
-        password = entry_password.get()
+    def on_signup_button_click(self, entry_email: ctk.CTkEntry, entry_username: ctk.CTkEntry, entry_password: ctk.CTkEntry) -> None:
+        email: str = entry_email.get()
+        username: str = entry_username.get()
+        password: str = entry_password.get()
 
         error = self.AccountManager.validate_signup(email, username, password)
         message = self.Helper.error_handler(error)
-        if message == None:
+        if message is None:
+            message = {
+                "Title": "Signup Success",
+                "Message": "You should receive an email confirming your account."
+            }
+            Helper.show_popup(message)
             Helper.start_session(username)
             from views.home_view import HomeView
             self.master.show_view(HomeView)

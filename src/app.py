@@ -1,10 +1,10 @@
 import customtkinter as ctk
 from utils.helper import Helper
 from views.login_view import LoginView
-from views.signup_view import SignupView
+from typing import Type
 
 class MainApp(ctk.CTk):
-    def __init__(self):
+    def __init__(self) -> None:
         self.config = Helper.load_config()
         ctk.set_appearance_mode(self.config["appearance_mode"])
         ctk.set_default_color_theme(self.config["color_theme"])
@@ -12,9 +12,9 @@ class MainApp(ctk.CTk):
         self.title("Pokédex App")
         self.geometry("700x900")
 
-        self.current_view = LoginView(self)
+        self.current_view: ctk.CTkFrame = LoginView(self)
 
-    def show_view(self, view_class):
+    def show_view(self, view_class: Type[ctk.CTkFrame]) -> None:
         if self.current_view is not None:
             self.current_view.destroy()  # Destroy the current view if it exists
 

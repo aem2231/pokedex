@@ -1,10 +1,13 @@
 import customtkinter as ctk
 from utils.helper import Helper
+from models.home_model import HomeModel
 import random
+from typing import Callable
 
 class HomeView(ctk.CTkFrame):
     def __init__(self, master) -> None:
-        self.user = Helper.get_username()
+        self.user: str = Helper.get_username()
+        self.HomeModel = HomeModel()
         super().__init__(master)
         self.master = master
         self.create_ui()
@@ -22,48 +25,38 @@ class HomeView(ctk.CTkFrame):
         self.grid_rowconfigure(4, weight=0)
         self.grid_rowconfigure(5, weight=1)  # This row will expand to fill the remaining space
 
-        search_box = ctk.CTkEntry(self, width=300, placeholder_text="Search")
+        search_box: ctk.CTkEntry = ctk.CTkEntry(self, width=300, placeholder_text="Search")
         search_box.grid(row=0, column=0, columnspan=3, padx=10, pady=10, sticky="n")
 
-        search_button = ctk.CTkButton(self, text="Search", command=self.search)
-        search_button.grid(row=1, column=0, columnspan=3, padx=10, pady=10, sticky="n")
+        search_button: ctk.CTkButton = ctk.CTkButton(self, text="Search", command=self.HomeModel.search(search_box.get()))
+        search_button.grid(row=0, column=1, columnspan=3, padx=10, pady=10, sticky="n")
 
         message = ctk.CTkLabel(self, text=f"{self.get_greeting()} {self.user}!", font=('Arial', 30))
         message.grid(row=2, column=0, columnspan=3, padx=10, pady=10, sticky="n")
 
-        padding_x = 10
-        padding_y = 10
+        padding_x: int = 10
+        padding_y: int = 10
+        button_names: list[str] = ["poke1", "poke2", "poke3", "poke4", "poke5", "poke6"]
+        positions: list[tuple[int, int]] = [(3, 0), (3, 1), (3, 2), (4, 0), (4, 1), (4, 2)]
 
-        # Create and place the buttons dynamically
-        buttons = []
-        for i in range(6):
-            button = ctk.CTkButton(self, text="", height=200, width=200)
-            row = 3 + i // 3
-            column = i % 3
-            button.grid(row=row, column=column, padx=padding_x, pady=padding_y)
-            buttons.append(button)
+        for name, (row, col) in zip(button_names, positions):
+            button: ctk.CTkButton = ctk.CTkButton(self, text="", height=200, width=200, command=self.create_command(name))
+            button.name = name # Assign a custom attribute 'name' to the buttons
+            button.grid(row=row, column=col, padx=padding_x, pady=padding_y)
 
-    def search(self):
-        print("search button clicked")
+    def create_command(self, button_name: str) -> Callable[[], None]:
+        return lambda: self.HomeModel.poke_on_click_handler(button_name)
 
     def get_greeting(self) -> str:
-        greetings = {
+        greetings: dict[int, str] = {
             1: "Hi",
             2: "How's it going",
             3: "Hello",
             4: "Hey",
             5: "What's up ",
             6: "Howdy",
-            7: "Greetings",
-            8: "Bonjour",
-            9: "Ciao",
-            10: "Salut",
-            11: "Guten Tag",
-            12: "Dobrodošli",
-            13: "Merhaba",
-            14: "Salve",
-            15: "Hola"        
+            7: "Greetings"
             }
 
-        greeting: str = greetings[random.randint(1, 15)]
+        greeting: str = greetings[random.randint(1, 7)]
         return greeting
