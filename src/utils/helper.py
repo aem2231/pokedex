@@ -9,10 +9,12 @@ import json
 class Helper:
     @classmethod
     def get_user_data_path(cls) -> Path:
+        """Returns data directory as a Path"""
         return Path.cwd() / "data" / "user_data.csv"
 
     @classmethod
     def start(cls) -> None:
+        """Start function that is ran every time the program is launched."""
         # Create the data file if it doesn't exist
         try:
             user_data_file: Path = Path.cwd() / "data" / "user_data.csv"
@@ -26,6 +28,10 @@ class Helper:
 
     @classmethod
     def load_config(cls) -> Mapping[str, Union[str, Path]]:
+        """Loads the config
+
+        Returns:
+            - Mapping[str, Union[str, Path]]"""
         config: Mapping[str, Union[str, Path]] = {}
         try:
             config_file: Path = Path.cwd() / "config" / "config.jsonc"
@@ -51,6 +57,10 @@ class Helper:
 
     @classmethod
     def show_popup(cls, message: Dict[str, str]) -> None:
+        """Shows a popup message.
+
+        Paramaters:
+            - Dict [str, str]"""
         title: str = message["Title"]
         content: str = message["Message"]
 
@@ -70,10 +80,12 @@ class Helper:
 
     @classmethod
     def get_username(cls) -> str:
+        """Returns username"""
         with open("session.json", "r") as session_file:
             data = json.load(session_file)
             return data["username"]
 
+    # This method is purely for the greetings in views/home_view.py to work
     @classmethod
     def start_session(cls, username: str) -> None:
         with open("session.json", "w") as session_file:
@@ -81,6 +93,14 @@ class Helper:
 
     @classmethod
     def error_handler(cls, error_code: int) -> Optional[Dict[str, str]]:
+        """Error handler
+
+        Paramaters:
+            - error_code (int)
+
+        Returns:
+            - message:  A dict of 'title' and 'content'
+            - None:  Returns on success"""
         message: Dict[str, str] = {"Title": "Message", "Message": ""}
         if error_code == 0:
             message["Message"] = "Username or password is incorrect"

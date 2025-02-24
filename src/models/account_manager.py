@@ -44,6 +44,17 @@ class AccountManager:
             return ErrorCodes.INCORRECT_USERNAME_OR_PASSWORD.value
 
     def validate_signup(self, email: str, username: str, password: str) -> int:
+        """Validates a sign up
+
+        Paramaters:
+            - email: str
+            - username: str
+            - password: str
+
+        Returns:
+            - Returns 7 on success
+            - See utils/error_codes.py for enum definitions"""
+
         if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email):
             return ErrorCodes.INVALID_EMAIL.value
 
