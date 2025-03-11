@@ -1,4 +1,6 @@
 .direnv
+.venv/
+.ropeproject
 data
 session.json
 config

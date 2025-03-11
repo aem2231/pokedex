@@ -3,6 +3,7 @@ import pandas as pd
 from enum import Enum
 from utils.helper import Helper
 from utils.error_codes import ErrorCodes
+import pokebase as pb
 
 class HomeModel:
     def __init__(self) -> None:
@@ -16,4 +17,5 @@ class HomeModel:
         Helper.show_popup(message)
 
     def search(self, query: str) -> None:
-        print(f"search button clicked: {query}")
+      result = pb.APIResourceList(query)
+      print(result)
