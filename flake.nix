@@ -19,6 +19,7 @@
         customtkinter
         pillow
         bcrypt
+        fuzzywuzzy
       ]);
     in {
       devShell = pkgs.mkShell {

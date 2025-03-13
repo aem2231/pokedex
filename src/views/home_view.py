@@ -49,7 +49,7 @@ class HomeView(ctk.CTkFrame):
         return lambda: self.HomeModel.poke_on_click_handler(button_name)
 
     def start_search(self) -> Callable[[], None]:
-        return lambda: self.HomeModel.search(self.search_box.get())
+        return lambda: self.HomeModel.search_pokemon(self.search_box.get())
 
     def get_greeting(self) -> str:
         greetings: dict[int, str] = {

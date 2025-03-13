@@ -5,6 +5,9 @@ from typing import Union, Optional, Dict, Mapping
 import customtkinter as ctk
 import bcrypt
 import json
+from fuzzywuzzy import fuzz
+from fuzzywuzzy import process
+from api.pokemon import Pokemon
 
 class Helper:
     @classmethod
@@ -25,6 +28,31 @@ class Helper:
                 print(f"Created new data file at {user_data_file}")
         except Exception as e:
             print(f"An error occurred while trying to create the data file: {e}")
+
+        try:
+            pokemon_file: Path = Path.cwd() / "data" / "pokemon.json"
+            pokemon_file.parent.mkdir(parents=True, exist_ok=True)
+
+            if not pokemon_file.exists():
+                pokemon_data: dict[str, str] = Pokemon.get_pokemon()
+                with open(pokemon_file, "w") as file:
+                    json.dump(pokemon_data, file, indent=4)
+        except Exception as e:
+            print(f"Failed to load pokemon: {e}")
+            return None
+
+    @classmethod
+    def fuzzy_find(cls, query) -> list[tuple[str, int]]:
+        poke_data_path: Path = Path.cwd() / "data" / "pokemon.json"
+        pokemon: list[str] = []
+        with open(poke_data_path, "r") as f:
+            data: dict[str, list[dict[str, str]]] = json.load(f)
+            for p in data["results"]:
+                pokemon.append(p["name"])
+
+        result: list[tuple[str, int]] = process.extract(query, pokemon)
+
+        return result
 
     @classmethod
     def load_config(cls) -> Mapping[str, Union[str, Path]]:
