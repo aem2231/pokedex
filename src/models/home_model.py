@@ -1,8 +1,12 @@
+from curses import noraw
 from typing import Union
+from warnings import resetwarnings
 import pandas as pd
 from enum import Enum
 from utils.helper import Helper
 from utils.error_codes import ErrorCodes
+import json
+from pathlib import Path
 
 
 class HomeModel:
@@ -16,6 +20,9 @@ class HomeModel:
         }
         Helper.show_popup(message)
 
-    def search_pokemon(self, query: str) -> list[tuple[str, int]]:
+    def search_pokemon(self, query: str) -> None:
        result: list[tuple[str, int]] = Helper.fuzzy_find(query)
-       print(result)
+       result_dir: Path = Path.cwd() / "data" / "pokemon.csv"
+
+       with open(result_dir, "w") as file:
+           json.dump(result, file)

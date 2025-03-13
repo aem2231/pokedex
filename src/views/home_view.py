@@ -1,4 +1,4 @@
-from os import confstr_names
+from turtledemo.paint import switchupdown
 import customtkinter as ctk
 from utils.helper import Helper
 from models.home_model import HomeModel
@@ -7,10 +7,9 @@ from typing import Callable
 
 class HomeView(ctk.CTkFrame):
     def __init__(self, master) -> None:
+        super().__init__(master)
         self.user: str = Helper.get_username()
         self.HomeModel = HomeModel()
-        super().__init__(master)
-        self.master = master
         self.create_ui()
         self.pack(expand=True, fill="both")
 
@@ -24,7 +23,7 @@ class HomeView(ctk.CTkFrame):
         self.grid_rowconfigure(2, weight=0)
         self.grid_rowconfigure(3, weight=0)
         self.grid_rowconfigure(4, weight=0)
-        self.grid_rowconfigure(5, weight=1)  # This row will expand to fill the remaining space
+        self.grid_rowconfigure(5, weight=1)
 
         self.search_box: ctk.CTkEntry = ctk.CTkEntry(self, width=300, placeholder_text="Search")
         self.search_box.grid(row=0, column=0, columnspan=3, padx=10, pady=10, sticky="n")
@@ -49,7 +48,7 @@ class HomeView(ctk.CTkFrame):
         return lambda: self.HomeModel.poke_on_click_handler(button_name)
 
     def start_search(self) -> Callable[[], None]:
-        return lambda: self.HomeModel.search_pokemon(self.search_box.get())
+        return lambda: self.switch_to_search_view()
 
     def get_greeting(self) -> str:
         greetings: dict[int, str] = {
@@ -64,3 +63,9 @@ class HomeView(ctk.CTkFrame):
 
         greeting: str = greetings[random.randint(1, 7)]
         return greeting
+
+    def switch_to_search_view(self) -> None:
+        self.HomeModel.search_pokemon(self.search_box.get())
+
+        from views.search_view import SearchView
+        self.master.show_view(SearchView)
