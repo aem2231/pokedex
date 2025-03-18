@@ -29,6 +29,7 @@ class Helper:
         except Exception as e:
             print(f"An error occurred while trying to create the data file: {e}")
 
+        # load all pokemon names into a json if it doesn't exist'
         try:
             pokemon_file: Path = Path.cwd() / "data" / "pokemon.json"
             pokemon_file.parent.mkdir(parents=True, exist_ok=True)
@@ -41,7 +42,7 @@ class Helper:
             print(f"Failed to load pokemon: {e}")
             return None
 
-    @classmethod
+    @classmethod # i dont actually remember why i put this function here, but fuck it we ball
     def fuzzy_find(cls, query) -> list[tuple[str, int]]:
         poke_data_path: Path = Path.cwd() / "data" / "pokemon.json"
         pokemon: list[str] = []
@@ -50,7 +51,7 @@ class Helper:
             for p in data["results"]:
                 pokemon.append(p["name"])
 
-        result: list[tuple[str, int]] = process.extract(query, pokemon)
+        result: list[tuple[str, int]] = process.extract(query, pokemon, limit = 10)
 
         return result
 
@@ -107,17 +108,22 @@ class Helper:
         return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 
     @classmethod
-    def get_username(cls) -> str:
-        """Returns username"""
-        with open("session.json", "r") as session_file:
-            data = json.load(session_file)
-            return data["username"]
-
-    # This method is purely for the greetings in views/home_view.py to work
-    @classmethod
     def start_session(cls, username: str) -> None:
-        with open("session.json", "w") as session_file:
-            json.dump({"username": username}, session_file, indent=4)
+        try:
+            with open("session.json", "w") as session_file:
+                json.dump({"username": username}, session_file, indent=4)
+        except Exception as e:
+            print(f"Failed to create session: {e}")
+
+    @classmethod
+    def get_username(cls) -> str:
+        try:
+            with open("session.json", "r") as session_file:
+                data = json.load(session_file)
+                return data.get("username", "User")  # Default to "User" if not found
+        except Exception as e:
+            print(f"Failed to get username: {e}")
+            return "User"
 
     @classmethod
     def error_handler(cls, error_code: int) -> Optional[Dict[str, str]]:

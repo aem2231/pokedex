@@ -1,4 +1,3 @@
-from curses import noraw
 from typing import Union
 from warnings import resetwarnings
 import pandas as pd
@@ -7,11 +6,15 @@ from utils.helper import Helper
 from utils.error_codes import ErrorCodes
 import json
 from pathlib import Path
+import customtkinter as ctk
+from models.search_model import SearchModel
 
 
-class HomeModel:
-    def __init__(self) -> None:
+class HomeModel(ctk.CTkFrame):
+    def __init__(self, master) -> None:
+        super().__init__(master)
         self.Helper = Helper()
+        self.SearchModel = SearchModel(self)
 
     def poke_on_click_handler(self, button: str) -> None:
         message: dict[str, str] = {
@@ -21,8 +24,6 @@ class HomeModel:
         Helper.show_popup(message)
 
     def search_pokemon(self, query: str) -> None:
-       result: list[tuple[str, int]] = Helper.fuzzy_find(query)
-       result_dir: Path = Path.cwd() / "data" / "pokemon.csv"
-
-       with open(result_dir, "w") as file:
-           json.dump(result, file)
+        result: list[tuple[str, int]] = Helper.fuzzy_find(query)
+        pokemon_list = self.SearchModel.get_pokemon_data(result)
+        self.master.pokemon_results = pokemon_list

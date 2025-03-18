@@ -95,24 +95,28 @@ class AccountManager:
         self.users_df.to_csv(self.data_file, index=False)
 
     def send_email(self, email: str, username: str) -> None:
-        sender_email = self.EMAIL_USERNAME
-        sender_password = self.EMAIL_PASSWORD
-        recipient_email: str = email
-
-        message = MIMEMultipart()
-        message["From"] = str(sender_email)
-        message["To"] = recipient_email
-        message["Subject"] = "Account Confirmation"
-
-        body = "Signup successful! Welcome to our platform, " + username + "!"
-        message.attach(MIMEText(body, "plain"))
+        if not all([self.EMAIL_USERNAME, self.EMAIL_PASSWORD]):
+            print("Email credentials not configured")
+            return
 
         try:
             server = smtplib.SMTP("smtp.gmail.com", 587)
             server.starttls()
-            server.login(str(sender_email), str(sender_password))
-            server.sendmail(str(sender_email), recipient_email, message.as_string())
+            server.login(str(self.EMAIL_USERNAME), str(self.EMAIL_PASSWORD))
+
+            message = MIMEMultipart()
+            message["From"] = str(self.EMAIL_USERNAME)
+            message["To"] = email
+            message["Subject"] = "Account Confirmation"
+
+            body = f"Signup successful! Welcome to our platform, {username}!"
+            message.attach(MIMEText(body, "plain"))
+
+            server.sendmail(str(self.EMAIL_USERNAME), email, message.as_string())
         except Exception as e:
-            print(f"An error occurred :(\n{e}")
+            print(f"Failed to send email: {e}")
         finally:
-            server.quit()
+            try:
+                server.quit()
+            except Exception:
+                pass

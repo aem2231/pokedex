@@ -3,6 +3,41 @@
 ## Overview
 Yet another collage project.
 
+## Directory Tree
+```
+.
+├── config
+│   └── config.jsonc
+├── data
+│   ├── pokemon.json
+│   └── user_data.csv
+├── flake.lock
+├── flake.nix
+├── README.md
+├── requirements.txt
+├── REVIEW.md
+├── session.json
+├── src
+│   ├── api
+│   │   └── pokemon.py
+│   ├── app.py
+│   ├── models
+│   │   ├── account_manager.py
+│   │   ├── home_model.py
+│   │   └── search_model.py
+│   ├── utils
+│   │   ├── error_codes.py
+│   │   └── helper.py
+│   └── views
+│       ├── home_view.py
+│       ├── login_view.py
+│       ├── search_view.py
+│       └── signup_view.py
+├── test.py
+└── themes
+    └── catppuccin-mocha.json
+```
+
 ## Prerequisites
 - Python 3 or higher
 - Required packages listed in `requirements.txt`
@@ -32,7 +67,7 @@ direnv allow
 ```
 Otherwise, run:
 ```sh
-nix-shell
+nix develop
 ```
 
 ## Running the Code

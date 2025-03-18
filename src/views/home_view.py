@@ -9,7 +9,7 @@ class HomeView(ctk.CTkFrame):
     def __init__(self, master) -> None:
         super().__init__(master)
         self.user: str = Helper.get_username()
-        self.HomeModel = HomeModel()
+        self.HomeModel = HomeModel(self)
         self.create_ui()
         self.pack(expand=True, fill="both")
 
@@ -41,7 +41,7 @@ class HomeView(ctk.CTkFrame):
 
         for name, (row, col) in zip(button_names, positions):
             button: ctk.CTkButton = ctk.CTkButton(self, text="", height=200, width=200, command=self.create_command(name))
-            button.name = name # Assign a custom attribute 'name' to the buttons
+            button.name = name # assign a custom attribute 'name' to the buttons
             button.grid(row=row, column=col, padx=padding_x, pady=padding_y)
 
     def create_command(self, button_name: str) -> Callable[[], None]:
@@ -65,7 +65,9 @@ class HomeView(ctk.CTkFrame):
         return greeting
 
     def switch_to_search_view(self) -> None:
-        self.HomeModel.search_pokemon(self.search_box.get())
-
-        from views.search_view import SearchView
-        self.master.show_view(SearchView)
+        query = self.search_box.get()
+        if query != "":  # only search if there's a query
+            print("search clicked")
+            self.HomeModel.search_pokemon(query)
+            from views.search_view import SearchView
+            self.master.show_view(SearchView)
