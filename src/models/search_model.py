@@ -68,7 +68,7 @@ class SearchModel(ctk.CTkFrame):
             data = response.json()
             id_url = data["forms"][0]["url"]
             id = data["id"]
-    
+
             image_url = f"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/{id}.png"
             print(image_url)
             image_path = Path.cwd() / "data" / "images" / f"poke{id}.png"
@@ -85,7 +85,7 @@ class SearchModel(ctk.CTkFrame):
 
 
     def update_pokemon(self, pokemon_name: str, new_pokemon: str) -> None:
-        print("search model")
+        # this function is more of a mess than my mental health /j
 
         old_url = f"https://pokeapi.co/api/v2/pokemon/{pokemon_name}"
         result = requests.get(old_url)
@@ -104,9 +104,7 @@ class SearchModel(ctk.CTkFrame):
             user_data = pd.read_csv(path_to_user_data)
 
             pokemon_columns = ['Poke1', 'Poke2', 'Poke3', 'Poke4', 'Poke5', 'Poke6']
-
             username = self.helper.get_username()
-
             user_row = user_data.loc[user_data['Username'] == username, pokemon_columns]
 
             if user_row.empty:
@@ -114,23 +112,14 @@ class SearchModel(ctk.CTkFrame):
                 return
 
             updated_row = user_row.replace({old_id: new_id}, regex=False)
-
             if updated_row.equals(user_row):
                 print(f"Pokémon {old_id} not found in user data for user: {username}")
                 return
 
             user_data.loc[user_data['Username'] == username, pokemon_columns] = updated_row.values
-
             user_data.to_csv(path_to_user_data, index=False)
-            print(f"Successfully replaced Pokémon {pokemon_name} with {new_pokemon} for user: {username}")
 
         except FileNotFoundError:
             print(f"User data file not found at: {path_to_user_data}")
         except Exception as e:
             print(f"An error occurred while updating Pokémon: {e}")
-
-
-
-
-
-

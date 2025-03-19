@@ -196,7 +196,7 @@ class Helper:
 
     @classmethod
     def save_result_names(cls, result_names: list[str]) -> None:
-        """Save a list of result names to a JSON file."""
+        # wtf
 
         results = {
             "result": result_names
@@ -212,7 +212,7 @@ class Helper:
 
     @classmethod
     def load_result_names(cls) -> list[str]:
-        """Load the list of result names from a JSON file."""
+        """Load the list of result names from a JSON file.""" # ???
         try:
             with open("result_names.json", "r") as f:
                 return json.load(f)["result"]

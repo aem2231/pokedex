@@ -62,7 +62,7 @@ class SearchView(ctk.CTkFrame):
                 image_path = Helper.get_placeholder_image()
                 if image_path and image_path.exists():
                     pokemon_image = ctk.CTkImage(
-                        dark_image=Image.open(image_path),
+                        dark_image=Image.open(image_path), # 6 levels deep again im scared
                         light_image=Image.open(image_path),
                         size=(150, 150)
                     )
@@ -98,15 +98,15 @@ class SearchView(ctk.CTkFrame):
         popup.geometry("200x300")
 
         label = ctk.CTkLabel(
-            popup, 
+            popup,
             text=f"Select a Pokémon to replace with {poke_name}:"
         )
         label.pack(pady=10)
 
         for i, name in enumerate(pokemon_names):
             button = ctk.CTkButton(
-                popup, 
-                text=name, 
+                popup,
+                text=name,
                 command=self.create_update_command(name, poke_name, popup)  # Pass popup here
             )
             button.pack(pady=5)
@@ -117,4 +117,3 @@ class SearchView(ctk.CTkFrame):
     def update_and_close_popup(self, pokemon_name: str, new_pokemon: str, popup) -> None:
         self.SearchModel.update_pokemon(pokemon_name, new_pokemon)
         popup.destroy()
-
