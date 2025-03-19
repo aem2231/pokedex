@@ -8,6 +8,7 @@ import bcrypt
 import os
 import re
 from enum import Enum
+import random
 from utils.helper import Helper
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -27,7 +28,7 @@ class AccountManager:
         except pd.errors.EmptyDataError:
             # Initialize empty DataFrame
             self.users_df = pd.DataFrame(columns=['Email', 'Username', 'Password',
-                                                'Poké1', 'Poké2', 'Poké3', 'Poké4', 'Poké5', 'Poké6'])
+                                                'Poke1', 'Poke2', 'Poke3', 'Poke4', 'Poke5', 'Poke6'])
 
     def validate_user(self, username: str, password: str) -> int:
         # Find the matching user
@@ -82,12 +83,12 @@ class AccountManager:
            'Email': email,
            'Username': username,
            'Password': Helper.hash_password(password),
-           'Poké1': '',
-           'Poké2': '',
-           'Poké3': '',
-           'Poké4': '',
-           'Poké5': '',
-           'Poké6': ''
+           'Poke1': f'{random.randint(1, 1025)}',
+           'Poke2': f'{random.randint(1, 1025)}',
+           'Poke3': f'{random.randint(1, 1025)}',
+           'Poke4': f'{random.randint(1, 1025)}',
+           'Poke5': f'{random.randint(1, 1025)}',
+           'Poke6': f'{random.randint(1, 1025)}'
         }
 
         # Append the new row to the data frame

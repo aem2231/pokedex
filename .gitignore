@@ -5,3 +5,4 @@ data
 session.json
 config
 **/__pycache__/
+result_names.json

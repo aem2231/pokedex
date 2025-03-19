@@ -8,6 +8,8 @@ import json
 from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
 from api.pokemon import Pokemon
+import random
+import requests
 
 class Helper:
     @classmethod
@@ -24,10 +26,16 @@ class Helper:
             user_data_file.parent.mkdir(parents=True, exist_ok=True)
 
             if not user_data_file.exists():
-                user_data_file.write_text("Email,Username,Password,Poké1,Poké2,Poké3,Poké4,Poké5,Poké6\n")
+                user_data_file.write_text("Email,Username,Password,Poke1,Poke2,Poke3,Poke4,Poke5,Poke6\n")
                 print(f"Created new data file at {user_data_file}")
         except Exception as e:
             print(f"An error occurred while trying to create the data file: {e}")
+
+        try:
+            images_file_path: Path = Path.cwd() / "data" / "images"
+            images_file_path.mkdir(parents=True, exist_ok=True)
+        except Exception as e:
+            print(f"An error occured: {e}")
 
         # load all pokemon names into a json if it doesn't exist'
         try:
@@ -53,7 +61,12 @@ class Helper:
 
         result: list[tuple[str, int]] = process.extract(query, pokemon, limit = 10)
 
-        return result
+        names: list[str] = []
+        i: int = 0
+        for r in result:
+            names.append(r[i])
+
+        return names
 
     @classmethod
     def load_config(cls) -> Mapping[str, Union[str, Path]]:
@@ -153,3 +166,67 @@ class Helper:
         elif error_code == 7:
             return None
         return message
+
+    @classmethod
+    def get_pokemon_names(cls, pokemon_ids: list[int]) -> list[str]:
+        """Retrieve Pokémon names for a given list of Pokémon IDs."""
+        try:
+            # Fetch Pokémon names using the API
+            pokemon_names = []
+            for poke_id in pokemon_ids:
+                if pd.notna(poke_id):  # Ensure the ID is not NaN
+                    url = f"https://pokeapi.co/api/v2/pokemon/{int(poke_id)}"
+                    response = requests.get(url)
+                    if response.status_code == 200:
+                        pokemon_data = response.json()
+                        # Access the "name" key directly from the response
+                        pokemon_names.append(pokemon_data["name"])
+                    else:
+                        print(f"Failed to fetch data for Pokémon ID {poke_id}")
+
+            return pokemon_names
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return []
+
+
+    @classmethod
+    def get_result_names(cls, result_name: list[str]) -> list[str]:
+        return result_names
+
+    @classmethod
+    def save_result_names(cls, result_names: list[str]) -> None:
+        """Save a list of result names to a JSON file."""
+
+        results = {
+            "result": result_names
+        }
+
+        print(result_names)
+
+        try:
+            with open("result_names.json", "w") as f:
+                json.dump(results, f, indent=4)
+        except Exception as e:
+            print(f"Failed to save result names: {e}")
+
+    @classmethod
+    def load_result_names(cls) -> list[str]:
+        """Load the list of result names from a JSON file."""
+        try:
+            with open("result_names.json", "r") as f:
+                return json.load(f)["result"]
+        except FileNotFoundError:
+            print("Result names file not found. Returning an empty list.")
+            return []
+        except Exception as e:
+            print(f"Failed to load result names: {e}")
+            return []
+
+    @classmethod
+    def get_placeholder_image(cls) -> Optional[Path]:
+        try:
+            return Path.cwd() / "assets" / "placeholder.png"
+        except Exception as e:
+            print(f"Failed to load placeholder image: {e}")
+            return None

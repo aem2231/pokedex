@@ -21,8 +21,8 @@ class Pokemon:
     @classmethod
     def get_pokemon_image(cls, pokemon_id: int, result_num: int) -> Optional[Image.Image]:  # Added return type
         try:
-            url = f"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{pokemon_id}.png"
-            image_path = Path.cwd() / "data" / f"poke{result_num}.png"
+            url = f"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/{pokemon_id}.png"
+            image_path = Path.cwd() / "data" / "images" / f"poke{result_num}.png"
             urllib.request.urlretrieve(url, image_path)
             return Image.open(image_path)
         except Exception as e:

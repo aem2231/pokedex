@@ -1,15 +1,22 @@
-from turtledemo.paint import switchupdown
+from enum import IntEnum
 import customtkinter as ctk
 from utils.helper import Helper
 from models.home_model import HomeModel
 import random
+import pandas as pd
 from typing import Callable
+from api.pokemon import Pokemon
+from PIL import Image
+from pathlib import Path
+from utils.helper import Helper
 
 class HomeView(ctk.CTkFrame):
     def __init__(self, master) -> None:
         super().__init__(master)
         self.user: str = Helper.get_username()
+        self.Pokemon = Pokemon()
         self.HomeModel = HomeModel(self)
+        self.Helper = Helper()
         self.create_ui()
         self.pack(expand=True, fill="both")
 
@@ -39,13 +46,59 @@ class HomeView(ctk.CTkFrame):
         button_names: list[str] = ["poke1", "poke2", "poke3", "poke4", "poke5", "poke6"]
         positions: list[tuple[int, int]] = [(3, 0), (3, 1), (3, 2), (4, 0), (4, 1), (4, 2)]
 
+        pokemon: list[str] = self.HomeModel.get_pokemon()
+        pokemon_sprites: list = []
+
+        r: int = 0
+        for p in pokemon:
+            pokemon_sprites.append(self.Pokemon.get_pokemon_image(int(p), r))
+
+        pokemon_names: list[str] = self.Helper.get_pokemon_names(pokemon)
+
+        i: int = 0
         for name, (row, col) in zip(button_names, positions):
-            button: ctk.CTkButton = ctk.CTkButton(self, text="", height=200, width=200, command=self.create_command(name))
-            button.name = name # assign a custom attribute 'name' to the buttons
-            button.grid(row=row, column=col, padx=padding_x, pady=padding_y)
+            try:
+                pokemon_id = int(pokemon[i])
+                image_path = Path.cwd() / "data" / "images" / f"poke{pokemon_id}.png"
+
+                if not image_path.exists():
+                    self.Pokemon.get_pokemon_image(pokemon_id, pokemon_id)
+
+                pokemon_image = ctk.CTkImage(
+                    dark_image=Image.open(image_path),
+                    light_image=Image.open(image_path),
+                    size=(150, 150)
+                )
+
+                button: ctk.CTkButton = ctk.CTkButton(
+                    self,
+                    text=f"{pokemon_names[i]}",
+                    image=pokemon_image,
+                    height=200,
+                    width=200,
+                    compound="top",
+                    command=self.create_command(name)
+                )
+                button.name = name
+                button.grid(row=row, column=col, padx=padding_x, pady=padding_y)
+
+                i += 1
+
+            except Exception as e:
+                print(f"Error loading Pokemon image: {e}")
+                button: ctk.CTkButton = ctk.CTkButton(
+                    self,
+                    text="Pokemon",
+                    height=200,
+                    width=200,
+                    command=self.create_command(name)
+                )
+                button.name = name
+                button.grid(row=row, column=col, padx=padding_x, pady=padding_y)
 
     def create_command(self, button_name: str) -> Callable[[], None]:
         return lambda: self.HomeModel.poke_on_click_handler(button_name)
+
 
     def start_search(self) -> Callable[[], None]:
         return lambda: self.switch_to_search_view()
@@ -68,6 +121,10 @@ class HomeView(ctk.CTkFrame):
         query = self.search_box.get()
         if query != "":  # only search if there's a query
             print("search clicked")
-            self.HomeModel.search_pokemon(query)
+            result = self.HomeModel.search_pokemon(query)
+            print(result)
+            self.Helper.save_result_names(result)
             from views.search_view import SearchView
             self.master.show_view(SearchView)
+
+# i hate this
