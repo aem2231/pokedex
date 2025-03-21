@@ -69,35 +69,6 @@ class Helper:
         return names
 
     @classmethod
-    def load_config(cls) -> Mapping[str, Union[str, Path]]:
-        """Loads the config
-
-        Returns:
-            - Mapping[str, Union[str, Path]]"""
-        config: Mapping[str, Union[str, Path]] = {}
-        try:
-            config_file: Path = Path.cwd() / "config" / "config.jsonc"
-            config_file.parent.mkdir(parents=True, exist_ok=True)
-            theme_path: Path = Path.cwd() / "themes" / "catppuccin-mocha.json"
-            default_config: Dict[str, str] = {
-                "appearance_mode": str(theme_path),
-                "color_theme": str(theme_path)
-            }
-
-            if not config_file.exists():
-                with open(config_file, "w") as file:
-                    json.dump(default_config, file, indent=4)
-                print(f"Created new config file at {config_file}")
-                return default_config
-            else:
-                with open(config_file, "r") as file:
-                    config = json.load(file)
-                return config
-        except Exception as e:
-            print(f"An error occurred while trying to create the data file: {e}")
-            return default_config
-
-    @classmethod
     def show_popup(cls, message: Dict[str, str]) -> None:
         """Shows a popup message.
 

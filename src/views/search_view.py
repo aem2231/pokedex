@@ -86,7 +86,6 @@ class SearchView(ctk.CTkFrame):
         from views.home_view import HomeView
         self.master.show_view(HomeView)
 
-
     def create_command(self, poke_name: str) -> Callable[[], None]:
         return lambda: self.show_popup(poke_name)
 
@@ -95,7 +94,7 @@ class SearchView(ctk.CTkFrame):
 
         popup = ctk.CTkToplevel(self.master)
         popup.title(f"Select a Pokémon")
-        popup.geometry("200x300")
+        popup.geometry("500x600")
 
         label = ctk.CTkLabel(
             popup,
@@ -110,6 +109,13 @@ class SearchView(ctk.CTkFrame):
                 command=self.create_update_command(name, poke_name, popup)  # Pass popup here
             )
             button.pack(pady=5)
+
+        cancel_button = ctk.CTkButton(
+            popup,
+            text="cancel (go back)",
+            command = popup.destroy
+        )
+        cancel_button.pack(pady=5)
 
     def create_update_command(self, pokemon_name: str, new_pokemon: str, popup) -> Callable[[], None]:
         return lambda: self.update_and_close_popup(pokemon_name, new_pokemon, popup)

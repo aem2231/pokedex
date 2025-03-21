@@ -18,6 +18,9 @@ class MainApp(ctk.CTk):
         Helper.start()
         self.show_view(LoginView)
 
+        ctk.set_appearance_mode("dark")
+
+
     def show_view(self, view_class):
         if self.current_view:
             self.current_view.destroy()
